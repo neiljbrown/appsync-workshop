@@ -1,6 +1,7 @@
 {
   "app": "node bin/appsync-workshop.js",
   "profile": "appsync-workshop",
+  "progress": "events",
   "watch": {
     "include": [
       "**"
