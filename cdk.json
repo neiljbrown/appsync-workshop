@@ -1,5 +1,6 @@
 {
   "app": "node bin/appsync-workshop.js",
+  "profile": "appsync-workshop",
   "watch": {
     "include": [
       "**"
