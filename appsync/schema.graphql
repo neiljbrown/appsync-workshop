@@ -20,6 +20,21 @@ input DeleteDataPointInput {
     createdAt: AWSDateTime!
 }
 
+enum ModelSortDirection {
+    ASC
+    DESC
+}
+
+input ModelStringKeyConditionInput {
+    eq: String
+    le: String
+    lt: String
+    ge: String
+    gt: String
+    between: [String]
+    beginsWith: String
+}
+
 type Mutation {
     createDataPoint(input: CreateDataPointInput!): DataPoint
     updateDataPoint(input: UpdateDataPointInput!): DataPoint
@@ -29,6 +44,14 @@ type Mutation {
 type Query {
     getDataPoint(name: ID!, createdAt: AWSDateTime!): DataPoint
     listDataPoints(filter: TableDataPointFilterInput, limit: Int, nextToken: String): DataPointConnection
+    queryDataPointsByNameAndDateTime(
+        name: ID!,
+        createdAt: ModelStringKeyConditionInput,
+        sortDirection: ModelSortDirection,
+        filter: TableDataPointFilterInput,
+        limit: Int,
+        nextToken: String
+    ): DataPointConnection
 }
 
 type Subscription {
