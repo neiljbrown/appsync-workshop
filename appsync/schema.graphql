@@ -1,6 +1,6 @@
 input CreateDataPointInput {
     name: ID!
-    createdAt: AWSDateTime!
+    createdAt: AWSDateTime
     value: Int
 }
 
