@@ -4,13 +4,13 @@ input CreateDataPointInput {
     value: Int
 }
 
-type DataPoint {
+type DataPoint @aws_api_key {
     name: ID!
     createdAt: AWSDateTime!
     value: Int
 }
 
-type DataPointConnection {
+type DataPointConnection @aws_api_key {
     items: [DataPoint]
     nextToken: String
 }
@@ -43,7 +43,11 @@ type Mutation {
 
 type Query {
     getDataPoint(name: ID!, createdAt: AWSDateTime!): DataPoint
+    @aws_api_key
+
     listDataPoints(filter: TableDataPointFilterInput, limit: Int, nextToken: String): DataPointConnection
+    @aws_api_key
+
     queryDataPointsByNameAndDateTime(
         name: ID!,
         createdAt: ModelStringKeyConditionInput,
@@ -52,6 +56,7 @@ type Query {
         limit: Int,
         nextToken: String
     ): DataPointConnection
+    @aws_api_key
 }
 
 type Subscription {
