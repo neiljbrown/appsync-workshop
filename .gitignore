@@ -5,5 +5,7 @@ node_modules
 cdk.out
 output.json
 
-# Folder containing the web-app supplied with the tutorial which provides a ReactJS front-end built using AWS Amplify.
-application
+# IntelliJ IDEA project files
+*.iml
+*.ipr
+*.iws
