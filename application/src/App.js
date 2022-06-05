@@ -7,11 +7,12 @@ import {
 import Chart from './Chart'
 import Generator from './Generator'
 
-import Amplify from 'aws-amplify'
+import Amplify, { Auth } from 'aws-amplify'
+import { withAuthenticator } from '@aws-amplify/ui-react'
 import awsconfig from './aws-exports'
 Amplify.configure(awsconfig)
 
-export default function App() {
+const App = () => {
   return (
     <Router>
       <div>
@@ -107,7 +108,20 @@ export default function App() {
             </div>
           </div>
         </main>
+
+        <div className="mx-auto text-center">
+          <button
+            className="p-2 font-bold underline"
+            onClick={() => {
+              Auth.signOut().then(() => window.location.reload())
+            }}
+          >
+            sign out
+          </button>
+        </div>
       </div>
     </Router>
   )
 }
+export default withAuthenticator(App)
+
