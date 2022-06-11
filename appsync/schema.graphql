@@ -1,21 +1,21 @@
-input CreateDataPointInput {
+input CreateDataPointInput @aws_api_key @aws_cognito_user_pools {
     name: ID!
     createdAt: AWSDateTime
     value: Int
 }
 
-type DataPoint @aws_api_key {
+type DataPoint @aws_api_key @aws_cognito_user_pools {
     name: ID!
     createdAt: AWSDateTime!
     value: Int
 }
 
-type DataPointConnection @aws_api_key {
+type DataPointConnection @aws_api_key @aws_cognito_user_pools  {
     items: [DataPoint]
     nextToken: String
 }
 
-input DeleteDataPointInput {
+input DeleteDataPointInput @aws_api_key @aws_cognito_user_pools {
     name: ID!
     createdAt: AWSDateTime!
 }
@@ -25,7 +25,7 @@ enum ModelSortDirection {
     DESC
 }
 
-input ModelStringKeyConditionInput {
+input ModelStringKeyConditionInput @aws_api_key @aws_cognito_user_pools  {
     eq: String
     le: String
     lt: String
@@ -36,17 +36,15 @@ input ModelStringKeyConditionInput {
 }
 
 type Mutation {
-    createDataPoint(input: CreateDataPointInput!): DataPoint
-    updateDataPoint(input: UpdateDataPointInput!): DataPoint
-    deleteDataPoint(input: DeleteDataPointInput!): DataPoint
+    createDataPoint(input: CreateDataPointInput!): DataPoint @aws_api_key @aws_cognito_user_pools
+    updateDataPoint(input: UpdateDataPointInput!): DataPoint @aws_api_key @aws_cognito_user_pools
+    deleteDataPoint(input: DeleteDataPointInput!): DataPoint @aws_api_key @aws_cognito_user_pools
 }
 
 type Query {
-    getDataPoint(name: ID!, createdAt: AWSDateTime!): DataPoint
-    @aws_api_key
+    getDataPoint(name: ID!, createdAt: AWSDateTime!): DataPoint @aws_api_key @aws_cognito_user_pools
 
-    listDataPoints(filter: TableDataPointFilterInput, limit: Int, nextToken: String): DataPointConnection
-    @aws_api_key
+    listDataPoints(filter: TableDataPointFilterInput, limit: Int, nextToken: String): DataPointConnection @aws_api_key @aws_cognito_user_pools
 
     queryDataPointsByNameAndDateTime(
         name: ID!,
@@ -56,30 +54,30 @@ type Query {
         limit: Int,
         nextToken: String
     ): DataPointConnection
-    @aws_api_key
+    @aws_api_key @aws_cognito_user_pools
 }
 
 type Subscription {
     onCreateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
-    @aws_subscribe(mutations: ["createDataPoint"])
+    @aws_subscribe(mutations: ["createDataPoint"]) @aws_api_key @aws_cognito_user_pools
     onUpdateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
-    @aws_subscribe(mutations: ["updateDataPoint"])
+    @aws_subscribe(mutations: ["updateDataPoint"]) @aws_api_key @aws_cognito_user_pools
     onDeleteDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
-    @aws_subscribe(mutations: ["deleteDataPoint"])
+    @aws_subscribe(mutations: ["deleteDataPoint"]) @aws_api_key @aws_cognito_user_pools
 }
 
-input TableBooleanFilterInput {
+input TableBooleanFilterInput @aws_api_key @aws_cognito_user_pools {
     ne: Boolean
     eq: Boolean
 }
 
-input TableDataPointFilterInput {
+input TableDataPointFilterInput @aws_api_key @aws_cognito_user_pools {
     name: TableIDFilterInput
     createdAt: TableStringFilterInput
     value: TableIntFilterInput
 }
 
-input TableFloatFilterInput {
+input TableFloatFilterInput @aws_api_key @aws_cognito_user_pools {
     ne: Float
     eq: Float
     le: Float
@@ -91,7 +89,7 @@ input TableFloatFilterInput {
     between: [Float]
 }
 
-input TableIDFilterInput {
+input TableIDFilterInput @aws_api_key @aws_cognito_user_pools {
     ne: ID
     eq: ID
     le: ID
@@ -104,7 +102,7 @@ input TableIDFilterInput {
     beginsWith: ID
 }
 
-input TableIntFilterInput {
+input TableIntFilterInput @aws_api_key @aws_cognito_user_pools {
     ne: Int
     eq: Int
     le: Int
@@ -116,7 +114,7 @@ input TableIntFilterInput {
     between: [Int]
 }
 
-input TableStringFilterInput {
+input TableStringFilterInput @aws_api_key @aws_cognito_user_pools {
     ne: String
     eq: String
     le: String
@@ -129,7 +127,7 @@ input TableStringFilterInput {
     beginsWith: String
 }
 
-input UpdateDataPointInput {
+input UpdateDataPointInput @aws_api_key @aws_cognito_user_pools {
     name: ID!
     createdAt: AWSDateTime!
     value: Int
