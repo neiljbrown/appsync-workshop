@@ -6,6 +6,7 @@ input CreateDataPointInput @aws_api_key @aws_cognito_user_pools {
 
 type DataPoint @aws_api_key @aws_cognito_user_pools {
     name: ID!
+    owner: String!
     createdAt: AWSDateTime!
     value: Int
 }
@@ -58,7 +59,7 @@ type Query {
 }
 
 type Subscription {
-    onCreateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
+    onCreateDataPoint(owner: String!, name: ID, createdAt: AWSDateTime, value: Int): DataPoint
     @aws_subscribe(mutations: ["createDataPoint"]) @aws_api_key @aws_cognito_user_pools
     onUpdateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
     @aws_subscribe(mutations: ["updateDataPoint"]) @aws_api_key @aws_cognito_user_pools
