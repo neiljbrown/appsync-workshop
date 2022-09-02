@@ -1,0 +1,13 @@
+## Handles the response for a request to subscribe to the creation of new data points.
+
+# Only permit the requesting user to subscribe to the data-points they own, and not other user's data-points
+#set( $isOwnerAuthorized = false )
+#set( $allowedOwner = $ctx.args.owner )
+#set( $identityValue = $util.defaultIfNull($ctx.identity.claims.get("username"), $ctx.identity.claims.get("cognito:username")) )
+#if( $allowedOwner == $identityValue )
+  #set( $isOwnerAuthorized = true )
+#end
+#if( !($isOwnerAuthorized == true) )
+  $util.unauthorized()
+#end
+$util.toJson(null)
