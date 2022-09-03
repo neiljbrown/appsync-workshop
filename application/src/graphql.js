@@ -4,6 +4,7 @@ export const CreateDataPoint = /* GraphQL */ `
       createdAt
       name
       value
+      owner
     }
   }
 `
@@ -34,8 +35,8 @@ export const QueryDataPoints = /* GraphQL */ `
 `
 
 export const OnCreateDataPoint = /* GraphQL */ `
-  subscription OnCreateDataPoint($name: ID!) {
-    onCreateDataPoint(name: $name) {
+  subscription OnCreateDataPoint($owner: String!, $name: ID!) {
+    onCreateDataPoint(owner: $owner, name: $name) {
       createdAt
       name
       value
