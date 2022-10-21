@@ -45,7 +45,14 @@ type Mutation {
 type Query {
     getDataPoint(name: ID!, createdAt: AWSDateTime!): DataPoint @aws_api_key @aws_cognito_user_pools
 
-    listDataPoints(filter: TableDataPointFilterInput, limit: Int, nextToken: String): DataPointConnection @aws_api_key @aws_cognito_user_pools
+    listDataPoints(
+        owner: String!
+        name: ID!
+        createdAt: ModelStringKeyConditionInput
+        sortDirection: ModelSortDirection
+        limit: Int
+        nextToken: String
+    ): DataPointConnection @aws_api_key@aws_cognito_user_pools
 
     queryDataPointsByNameAndDateTime(
         name: ID!,
@@ -61,8 +68,10 @@ type Query {
 type Subscription {
     onCreateDataPoint(owner: String!, name: ID, createdAt: AWSDateTime, value: Int): DataPoint
     @aws_subscribe(mutations: ["createDataPoint"]) @aws_api_key @aws_cognito_user_pools
+
     onUpdateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
     @aws_subscribe(mutations: ["updateDataPoint"]) @aws_api_key @aws_cognito_user_pools
+
     onDeleteDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
     @aws_subscribe(mutations: ["deleteDataPoint"]) @aws_api_key @aws_cognito_user_pools
 }
@@ -76,18 +85,6 @@ input TableDataPointFilterInput @aws_api_key @aws_cognito_user_pools {
     name: TableIDFilterInput
     createdAt: TableStringFilterInput
     value: TableIntFilterInput
-}
-
-input TableFloatFilterInput @aws_api_key @aws_cognito_user_pools {
-    ne: Float
-    eq: Float
-    le: Float
-    lt: Float
-    ge: Float
-    gt: Float
-    contains: Float
-    notContains: Float
-    between: [Float]
 }
 
 input TableIDFilterInput @aws_api_key @aws_cognito_user_pools {
