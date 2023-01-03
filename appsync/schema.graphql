@@ -6,7 +6,6 @@ input CreateDataPointInput @aws_api_key @aws_cognito_user_pools {
 
 type DataPoint @aws_api_key @aws_cognito_user_pools {
     name: ID!
-    owner: String!
     createdAt: AWSDateTime!
     value: Int
 }
@@ -37,68 +36,66 @@ input ModelStringKeyConditionInput @aws_api_key @aws_cognito_user_pools  {
 }
 
 type Mutation {
-    # Creates a new DataPoint belonging to a named time-series, with a specified value.
+    # Creates a new DataPoint belonging to a named series, with a specified value.
     #
     # Input:
-    # Supply the time-series name and optional value (defaults to zero) and created date/time (defaults to 'now').
+    # Supply the series name and optional value (defaults to zero) and created date/time (defaults to 'now').
     createDataPoint(input: CreateDataPointInput!): DataPoint @aws_api_key @aws_cognito_user_pools
 
-    # Updates the value of a DataPoint identified by its time-series name and created date/time.
+    # Updates the value of a DataPoint identified by its series name and created date/time.
     #
     # Input:
-    # Supply the time-series name and created date/time, and optional value (defaults to zero).
+    # Supply the series name and created date/time, and optional value (defaults to zero).
     updateDataPoint(input: UpdateDataPointInput!): DataPoint @aws_api_key @aws_cognito_user_pools
 
-    # Deletes a DataPoint identified by its time-series name and created date/time.
+    # Deletes a DataPoint identified by its series name and created date/time.
     #
     # Input:
-    # Supply the time-series name and created date/time.
+    # Supply the series name and created date/time.
     deleteDataPoint(input: DeleteDataPointInput!): DataPoint @aws_api_key @aws_cognito_user_pools
 }
 
 type Query {
-    # Retrieves a single DataPoint belonging to a named time-series which was created on the specified date/time.
+    # Retrieves a single DataPoint belonging to a named series which was created on the specified date/time.
     #
     # Params -
-    # name - The name of the time-series to which the data-point belongs.
+    # name - The name of the series to which the data-point belongs.
     # createdAt - The date/time the data-point was created in ISO-8601 format.
     #
     # Returns - The DataPoint if matched.
     getDataPoint(name: ID!, createdAt: AWSDateTime!): DataPoint @aws_api_key @aws_cognito_user_pools
 
-    # Retrieves a list of zero, one or more DataPoint belonging to a named time-series which are owned (created by) an
-    # identified user. The list can optionally be filtered to only include data-point created within a specified
-    # time-range. The list is sorted by the the data-point's creation date/time. And is returned a page at a time.
+    # Retrieves a list of zero, one or more DataPoint belonging to a named series. The list can optionally be
+    # filtered to only include data-point created within a specified time-range. The list is sorted by the
+    # data-point's creation date/time, and is returned a page at a time.
     #
     # Params -
-    # owner - The name of the user whose data-points are to be retrieved.
-    # name - The name of the time-series to which the data-points belong.
-    # createdAt - Optional parameter for filtering the data-points within a specified time-range, using one of a
-    # support set of operators.
-    # sortDirection - Optional sort order. Defaults to ascending (oldest data-point first).
-    # limit - Optional max number of data-points to return in the page. Defaults to 100.
+    # filter - Optional input type specifying one or more optional filters for the fields of the data-point to include.
+    # Each component field is a value and supported filter operator (e.g. lt, gt, eq, between etc). Component filter
+    # fields include -
+    # - name - Filters data-points by the name of their series.
+    # - value - Filters data-points by their value.
+    # - createdAt - Filters data-points by the date/time they were created, including within a specified time-range.
+    # limit - Optional max number of data-points to return in the page. Defaults to 20.
     # nextToken - Optional token (cursor) for the next page of results if this is request for the continuation of the
     # paged query.
     #
     # Returns - A page of data-point, containing a list of zero, one or more items containing the data-points, and a
     # non-empty token (cursor) for the next page of data-points, if there more than the limit.
     listDataPoints(
-        owner: String!
-        name: ID!
-        createdAt: ModelStringKeyConditionInput
-        sortDirection: ModelSortDirection
-        limit: Int
-        nextToken: String
-    ): DataPointConnection @aws_api_key@aws_cognito_user_pools
+      filter: TableDataPointFilterInput,
+      limit: Int,
+      nextToken: String
+    ): DataPointConnection @aws_api_key @aws_cognito_user_pools
 
-    # Queries data-points belonging to a named time-series, that were created within a specified time range.
+    # Queries data-points belonging to a named series, that were created within a specified time range.
     # (Provides a more efficient way to query data-points within a time range than the list query operation).
     # The matching point(s) are returned a page at a time, up to a specified limit.
     #
     # The data-points can optionally be filtered by the data-point creation date using a standard set of operators.
     #
     # Params -
-    # name - The name of the time-series to which the data-points belong.
+    # name - The name of the series to which the data-points belong.
     # createdAt - Specifies the time-range in which the data-points were created, using one of a support set of
     # operators.
     # sortDirection - Optional sort order. Defaults to ascending (oldest data-point first).
@@ -121,22 +118,21 @@ type Query {
 }
 
 type Subscription {
-    # Subscribes to receive notifications of new data-points created by a specified user (owner), via the
+    # Subscribes to receive notifications of new data-points made via the
     # createDataPoint mutation. The subscription can be filtered by supported parameters.
     #
     # Params -
-    # owner - The name of the user whose new data-points are to be subscribed to. (Mandatory)
     # name - Filters the subscription to only those data-points with a matching time-series name.
     # createdAt - Filters the subscription to only a data-points with a matching creation date/time, in ISO-8601 format.
     # value - Filters the subscription to only those data-points with a matching value.
-    onCreateDataPoint(owner: String!, name: ID, createdAt: AWSDateTime, value: Int): DataPoint
+        onCreateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
     @aws_subscribe(mutations: ["createDataPoint"]) @aws_api_key @aws_cognito_user_pools
 
     # Subscribes to receive notifications of updates to data-points made via the updateDataPoint mutation. The
     # subscription can be filtered by supported parameters.
     #
     # Params -
-    # name - Filters the subscription to only those data-points with a matching time-series name.
+    # name - Filters the subscription to only those data-points with a matching series name.
     # createdAt - Filters the subscription to only a data-points with a matching creation date/time, in ISO-8601 format.
     # value - Filters the subscription to only those data-points with a matching updated value.
     onUpdateDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint
@@ -146,7 +142,7 @@ type Subscription {
     # subscription can be filtered by supported parameters.
     #
     # Params -
-    # name - Filters the subscription to only those data-points with a matching time-series name.
+    # name - Filters the subscription to only those data-points with a matching series name.
     # createdAt - Filters the subscription to only a data-points with a matching creation date/time, in ISO-8601 format.
     # value - Filters the subscription to only those data-points with a matching current (deleted) value.
     onDeleteDataPoint(name: ID, createdAt: AWSDateTime, value: Int): DataPoint

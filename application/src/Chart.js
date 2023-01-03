@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import 'react-datepicker/dist/react-datepicker.css'
 import { ResponsiveLine as Line } from '@nivo/line'
 
-import { API, Auth } from 'aws-amplify'
+import { API } from 'aws-amplify'
 
 import { QueryDataPoints } from './graphql'
 import { OnCreateDataPoint } from './graphql'
@@ -130,18 +130,6 @@ function Chart() {
 
   const [tokens, dispatchToken] = useReducer(tokenReducer, {})
 
-  const [user, setUser] = useState(null)
-
-  useEffect(() => {
-    console.log('start')
-    Auth.currentAuthenticatedUser()
-      .then((user) => {
-        setUser(user)
-        console.log(user)
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
   useEffect(() => {
     console.log('+', JSON.stringify(tokens, null, 2))
   }, [tokens])
@@ -174,7 +162,7 @@ function Chart() {
     console.log('starting sub on', name)
     const subscription = API.graphql({
       query: OnCreateDataPoint,
-      variables: { name, owner: user.username },
+      variables: { name: name },
     }).subscribe({
       next: (received) => {
         setDataPoints([received.value.data.onCreateDataPoint])
@@ -185,7 +173,7 @@ function Chart() {
       console.log('stopping subscription')
       subscription.unsubscribe()
     }
-  }, [name, live, user?.username])
+  }, [name, live])
 
   const handleSubmit = (e) => {
     e.preventDefault()
