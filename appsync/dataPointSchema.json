@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "title": "Data-point",
+  "description": "A data-point (metric) for a named data-series.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "The name of the series which this data-point belongs to.",
+      "type": "string"
+    },
+    "value": {
+      "description": "The data-point's value.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "createdAt": {
+      "description": "The date/time the data-point was created, in UTC. ISO-8601 format datetime string, to millisecond resolution, with 'Z' time zone designator.",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.[0-9]{3}Z$"
+    }
+  },
+  "required": ["name","value","createdAt"]
+}
