@@ -784,10 +784,10 @@ Pretty cool, eh? This illustrates the kind of real-time use-cases which GraphQL 
 4) Click the 'Stop' button to (unsubscribe and) stop displaying new data-points.
 
 == Clean-up
-Before finishing with this project and moving on, follow the steps below to clean up the AWS resources and data which were created, if only to avoid being billed in the future.
+Before finishing with this project, follow the steps below to clean up the AWS resources that were created in your AWS account, if only to avoid being billed for them in the future.
 
-=== Destroy App's CloudFormation Stack
-Delete some of the resources that were created for various AWS services (AppSync, Cognito etc.) by destroying the stack that was deployed by the CDK app, as follows
+=== Destroy AWS CDK App's Stack
+Delete the resources that were created for various AWS services (AppSync, Cognito etc.) by destroying the CloudFormation stack that was deployed by the CDK app, as follows
 
 1) Open a terminal session and change to the root directory for the app, e.g.
 [source,bash]
@@ -800,5 +800,14 @@ $ cd ~/appsync-workshop
 ----
 $ cdk destroy
 ----
+
+=== Manually Delete Remaining Data and AWS Resources
+The CloudFormation service skips the deletion of any AWS resources deployed in the CDK app stack that contain data. It's therefore necessary to manually delete both the app's DynamoDB table and Cognito User Pool.
+
+1) Log in to the AWS management web console for your AWS account, and select the region in which the AppSync GraphQL was deployed.
+
+2) Navigate to the DynamoDB service. Use the 'Tables' side menu to list all existing tables. Select the table with the name beginning with `AppsyncWorkshopStack-DataPointTable` and click the 'Delete' button.
+
+3) Navigate to the Cognito service. Use the 'User Pools' side menu to list all existing pools. Select the pool  named `WorkshopUserPool`. (Ensure the ID of the pool matches the one which the CDK app reported having created). And click the 'Delete user pool' button.
 
 End.
